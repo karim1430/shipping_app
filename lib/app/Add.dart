@@ -100,16 +100,8 @@ class AddOrderPage extends StatelessWidget {
                   if (_formKey.currentState!.validate()) {
                     print(selectedSize.value) ;
                     print(selectedSize.toString()) ;
-                    cubit.createOrder(pickupLocation: fromController.text, destination: toController.text, weightInKg:  int.parse(weightController.text), packageSize:selectedSize.value.toString(), details: "", token: utoken) ;
-                    if (state is OrderSuccess) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("The request has been registered successfully")),
-                      );
-                    } else if (state is OrderError) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("The request was not registered")),
-                      );
-                    }
+                    cubit.createOrder(pickupLocation: fromController.text, destination: toController.text, weightInKg:  int.parse(weightController.text), packageSize:selectedSize.value.toString(), details: "", token: utoken, c: context) ;
+
                   }
                 },
                 style: ElevatedButton.styleFrom(

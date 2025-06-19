@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:untitled9/userdata.dart';
 
 import '../appcubit/cubit.dart';
 import '../appcubit/state.dart'; // لو عندك ملف الستيتات
@@ -98,20 +99,15 @@ class OrderHistoryScreen extends StatelessWidget {
       itemCount: ordersList.length,
       itemBuilder: (context, index) {
         final order = ordersList[index];
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.1),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
+        return InkWell(
+          onTap: (){
+            print(order.id) ;
+            var cubit = BlocProvider.of<AppCubit>(context);
+            cubit.fetchOffersByOrderId(order.id, utoken) ;
+            cubit.ORDERID - order.id ;
+            cubit.offers=[] ;
+            cubit.ChangeCurrent(4) ;
+          },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

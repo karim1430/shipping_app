@@ -15,11 +15,8 @@ class HomeScreen extends StatelessWidget {
     return BlocBuilder<AppCubit, AppState>(
       builder: (context, currentIndex) {
         var cubit = context.read<AppCubit>();
-        if(cubit.i==0){
           cubit.getCompanies(utoken);
-          cubit.getOrders(utoken) ;
-          cubit.i = 2 ;
-        }
+          cubit.fetchOrders() ;
         return Padding(
           padding: const EdgeInsets.all(8.0),
           child: Scaffold(

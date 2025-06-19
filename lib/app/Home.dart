@@ -112,9 +112,9 @@ class HomePage extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _buildStatCard("Orders", "12", Icons.assignment_outlined, Colors.blue),
-                  _buildStatCard("Delivered", "10", Icons.check_circle_outline, Colors.green),
-                  _buildStatCard("Pending", "2", Icons.hourglass_bottom, Colors.orange),
+                  _buildStatCard("Orders", cubit.orders.length.toString() , Icons.assignment_outlined, Colors.blue),
+                  _buildStatCard("Delivered", cubit.deliveredCount.toString(), Icons.check_circle_outline, Colors.green),
+                  _buildStatCard("Pending", cubit.pendingCount.toString(), Icons.hourglass_bottom, Colors.orange),
                 ],
               ),
 
@@ -133,22 +133,75 @@ class HomePage extends StatelessWidget {
               ListView.builder(
                 shrinkWrap: true,
                 physics: NeverScrollableScrollPhysics(),
-                itemCount: 2,
+                itemCount: cubit.lastTwoOrders.length,
                 itemBuilder: (context, index) {
+                  final order = cubit.lastTwoOrders[index]; // هنا بناخد العنصر الحالي من الليست
                   return Card(
-                    margin: const EdgeInsets.only(bottom: 12),
-                    child: ListTile(
-                      leading: Icon(Icons.local_shipping, color: Colors.indigo),
-                      title: Text("Order #${index + 1} - Cairo to Giza"),
-                      subtitle: Text("Status: In Transit"),
-                      trailing: Icon(Icons.arrow_forward_ios, size: 16),
-                      onTap: () {
-                        // Navigate to shipment details
-                      },
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    elevation: 4,
+                    margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    child: Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            children: [
+                              Icon(Icons.local_shipping, color: Colors.indigo, size: 28),
+                              const SizedBox(width: 10),
+                              Expanded(
+                                child: Text(
+                                  "Order #${order.id}",
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.indigo,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            "${order.pickupLocation} ➔ ${order.destination}",
+                            style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                          ),
+                          const Divider(height: 15, thickness: 1),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Status: ${order.status}", style: TextStyle(fontSize: 13)),
+                              Text("Weight: ${order.weightInKg} Kg", style: TextStyle(fontSize: 13)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text("Size: ${order.packageSize}", style: TextStyle(fontSize: 13)),
+                              Text("Owner: ${order.ownerName}", style: TextStyle(fontSize: 13)),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          Text("Company: ${order.companyName ?? 'No Company'}", style: TextStyle(fontSize: 13)),
+                          const SizedBox(height: 4),
+                          Text("Details: ${order.details.isNotEmpty ? order.details : 'No details'}", style: TextStyle(fontSize: 13)),
+                          const SizedBox(height: 4),
+                          Text(
+                            "Created At: ${order.createdAtUtc.toString().split('.')[0]}",
+                            style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+                          ),
+                        ],
+                      ),
                     ),
                   );
+
+
                 },
               ),
+
             ],
           ),
         );

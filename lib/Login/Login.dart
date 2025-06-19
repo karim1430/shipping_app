@@ -105,17 +105,7 @@ class LoginScreen extends StatelessWidget {
                     ),
                   ),
                   onPressed: () {
-                    cubit.login(emailController.text, passwordController.text) ;
-                    if (state is LoginSuccess) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                      );
-                    } else if (state is LoginFailure) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("a problem")),
-                      );
-                    }
+                    cubit.login(emailController.text, passwordController.text , context ) ;
                   },
                   child: const Text(
                     'Login',

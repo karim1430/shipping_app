@@ -178,7 +178,7 @@ class RegisterScreen extends StatelessWidget {
                           ),
                         ),
                         onPressed: () {
-                          cubit.register(fullNameController.text, emailController.text, passwordController.text, phoneController.text) ;
+                          cubit.register(fullNameController.text, emailController.text, passwordController.text, phoneController.text, context) ;
                           if (state is RegisterSuccess) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(content: Text("The account was created successfully")),
