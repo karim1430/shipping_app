@@ -7,7 +7,6 @@ import 'package:untitled9/userdata.dart';
 
 import '../models/Offer Model.dart';
 
-
 class ShippingOffersPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,7 +22,7 @@ class ShippingOffersPage extends StatelessWidget {
       body: BlocBuilder<AppCubit, AppState>(
         builder: (context, state) {
           var cubit = context.read<AppCubit>();
-          final offers = cubit.offers; // الليست من الكيوبت مباشرة
+          final offers = cubit.offers;
           if (offers.isEmpty) {
             return Center(
               child: Text(
@@ -76,174 +75,196 @@ class ShippingOffersPage extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: ElevatedButton.icon(
                 onPressed: () {
-                  showModalBottomSheet(
+                  showDialog(
                     context: context,
-                    isScrollControlled: true,
-                    backgroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
-                    ),
                     builder: (context) {
-                      final cardController = TextEditingController();
-                      final expiryController = TextEditingController();
-                      final cvvController = TextEditingController();
-                      final formKey = GlobalKey<FormState>();
-
-                      return Padding(
-                        padding: EdgeInsets.only(
-                          left: 20,
-                          right: 20,
-                          top: 20,
-                          bottom: MediaQuery.of(context).viewInsets.bottom + 20,
-                        ),
-                        child: SingleChildScrollView(
-                          child: Form(
-                            key: formKey,
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Icon(Icons.credit_card, size: 60, color: Colors.indigo),
-                                SizedBox(height: 10),
-                                Text(
-                                  'Secure Payment',
-                                  style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.indigo),
-                                ),
-                                SizedBox(height: 4),
-                                Text(
-                                  'Enter your Visa card details below',
-                                  style: TextStyle(color: Colors.grey.shade600),
-                                ),
-                                SizedBox(height: 20),
-
-                                // Card Number Field
-                                TextFormField(
-                                  controller: cardController,
-                                  keyboardType: TextInputType.number,
-                                  maxLength: 16,
-                                  decoration: InputDecoration(
-                                    labelText: 'Card Number',
-                                    hintText: 'XXXX XXXX XXXX XXXX',
-                                    prefixIcon: Icon(Icons.credit_card, color: Colors.indigo),
-                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                                    filled: true,
-                                    fillColor: Colors.indigo.shade50,
+                      return AlertDialog(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                        title: Text('Choose Payment Method', style: GoogleFonts.poppins(fontWeight: FontWeight.bold)),
+                        content: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            ListTile(
+                              leading: Icon(Icons.credit_card, color: Colors.indigo),
+                              title: Text('Pay with Visa', style: GoogleFonts.poppins()),
+                              onTap: () {
+                                Navigator.pop(context);
+                                showModalBottomSheet(
+                                  context: context,
+                                  isScrollControlled: true,
+                                  backgroundColor: Colors.white,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.vertical(top: Radius.circular(30)),
                                   ),
-                                  validator: (value) {
-                                    if (value == null || value.length != 16) {
-                                      return 'Enter 16-digit card number';
-                                    }
-                                    return null;
-                                  },
-                                ),
+                                  builder: (context) {
+                                    final cardController = TextEditingController();
+                                    final expiryController = TextEditingController();
+                                    final cvvController = TextEditingController();
+                                    final formKey = GlobalKey<FormState>();
 
-                                SizedBox(height: 12),
-
-                                Row(
-                                  children: [
-                                    // Expiry Date Field
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: expiryController,
-                                        keyboardType: TextInputType.datetime,
-                                        maxLength: 5,
-                                        decoration: InputDecoration(
-                                          labelText: 'Expiry',
-                                          hintText: 'MM/YY',
-                                          prefixIcon: Icon(Icons.calendar_today, color: Colors.indigo),
-                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                                          filled: true,
-                                          fillColor: Colors.indigo.shade50,
+                                    return SafeArea(
+                                      child: Padding(
+                                        padding: EdgeInsets.only(
+                                          left: 20,
+                                          right: 20,
+                                          top: 20,
+                                          bottom: MediaQuery.of(context).viewInsets.bottom,
                                         ),
-                                        validator: (value) {
-                                          if (value == null || !RegExp(r'^\d{2}/\d{2}$').hasMatch(value)) {
-                                            return 'Invalid expiry';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                    SizedBox(width: 10),
-
-                                    // CVV Field
-                                    Expanded(
-                                      child: TextFormField(
-                                        controller: cvvController,
-                                        keyboardType: TextInputType.number,
-                                        maxLength: 3,
-                                        obscureText: true,
-                                        decoration: InputDecoration(
-                                          labelText: 'CVV',
-                                          hintText: '***',
-                                          prefixIcon: Icon(Icons.lock, color: Colors.indigo),
-                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
-                                          filled: true,
-                                          fillColor: Colors.indigo.shade50,
-                                        ),
-                                        validator: (value) {
-                                          if (value == null || value.length != 3) {
-                                            return 'Invalid CVV';
-                                          }
-                                          return null;
-                                        },
-                                      ),
-                                    ),
-                                  ],
-                                ),
-
-                                SizedBox(height: 20),
-
-                                ElevatedButton.icon(
-                                  onPressed: () {
-                                    if (formKey.currentState!.validate()) {
-                                      Navigator.pop(context);
-                                      showDialog(
-                                        context: context,
-                                        barrierDismissible: false,
-                                        builder: (_) => AlertDialog(
-                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                          title: Text('Processing Payment...'),
-                                          content: Row(
-                                            children: [
-                                              CircularProgressIndicator(color: Colors.indigo),
-                                              SizedBox(width: 20),
-                                              Text('Please wait'),
-                                            ],
+                                        child: SingleChildScrollView(
+                                          child: Form(
+                                            key: formKey,
+                                            child: Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Icon(Icons.credit_card, size: 60, color: Colors.indigo),
+                                                SizedBox(height: 10),
+                                                Text('Secure Payment', style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold, color: Colors.indigo)),
+                                                SizedBox(height: 4),
+                                                Text('Enter your Visa card details below', style: TextStyle(color: Colors.grey.shade600)),
+                                                SizedBox(height: 20),
+                                                TextFormField(
+                                                  controller: cardController,
+                                                  keyboardType: TextInputType.number,
+                                                  maxLength: 16,
+                                                  decoration: InputDecoration(
+                                                    labelText: 'Card Number',
+                                                    hintText: 'XXXX XXXX XXXX XXXX',
+                                                    prefixIcon: Icon(Icons.credit_card, color: Colors.indigo),
+                                                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                                    filled: true,
+                                                    fillColor: Colors.indigo.shade50,
+                                                  ),
+                                                  validator: (value) {
+                                                    if (value == null || value.length != 16) return 'Enter 16-digit card number';
+                                                    return null;
+                                                  },
+                                                ),
+                                                SizedBox(height: 12),
+                                                Row(
+                                                  children: [
+                                                    Expanded(
+                                                      child: TextFormField(
+                                                        controller: expiryController,
+                                                        keyboardType: TextInputType.datetime,
+                                                        maxLength: 5,
+                                                        decoration: InputDecoration(
+                                                          labelText: 'Expiry',
+                                                          hintText: 'MM/YY',
+                                                          prefixIcon: Icon(Icons.calendar_today, color: Colors.indigo),
+                                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                                          filled: true,
+                                                          fillColor: Colors.indigo.shade50,
+                                                        ),
+                                                        validator: (value) {
+                                                          if (value == null || !RegExp(r'^\d{2}/\d{2}$').hasMatch(value)) return 'Invalid expiry';
+                                                          return null;
+                                                        },
+                                                      ),
+                                                    ),
+                                                    SizedBox(width: 10),
+                                                    Expanded(
+                                                      child: TextFormField(
+                                                        controller: cvvController,
+                                                        keyboardType: TextInputType.number,
+                                                        maxLength: 3,
+                                                        obscureText: true,
+                                                        decoration: InputDecoration(
+                                                          labelText: 'CVV',
+                                                          hintText: '***',
+                                                          prefixIcon: Icon(Icons.lock, color: Colors.indigo),
+                                                          border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
+                                                          filled: true,
+                                                          fillColor: Colors.indigo.shade50,
+                                                        ),
+                                                        validator: (value) {
+                                                          if (value == null || value.length != 3) return 'Invalid CVV';
+                                                          return null;
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                                SizedBox(height: 20),
+                                                ElevatedButton.icon(
+                                                  onPressed: () {
+                                                    if (formKey.currentState!.validate()) {
+                                                      Navigator.pop(context);
+                                                      showDialog(
+                                                        context: context,
+                                                        barrierDismissible: false,
+                                                        builder: (_) => AlertDialog(
+                                                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                                          title: Text('Processing Payment...'),
+                                                          content: Row(
+                                                            children: [
+                                                              CircularProgressIndicator(color: Colors.indigo),
+                                                              SizedBox(width: 20),
+                                                              Text('Please wait'),
+                                                            ],
+                                                          ),
+                                                        ),
+                                                      );
+                                                      Future.delayed(Duration(seconds: 2), () {
+                                                        cubit.updateOfferStatus(
+                                                          offerId: offer.id,
+                                                          token: utoken,
+                                                          status: "Accepted",
+                                                          paymentMethod: "CreditCard",
+                                                        );
+                                                        Navigator.pop(context);
+                                                        ScaffoldMessenger.of(context).showSnackBar(
+                                                          SnackBar(
+                                                            content: Text('✅ Payment Successful'),
+                                                            backgroundColor: Colors.green,
+                                                          ),
+                                                        );
+                                                      });
+                                                    }
+                                                  },
+                                                  icon: Icon(Icons.payment),
+                                                  label: Text('Pay Now'),
+                                                  style: ElevatedButton.styleFrom(
+                                                    backgroundColor: Colors.indigo,
+                                                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 50),
+                                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                                                  ),
+                                                ),
+                                                SizedBox(height: 10),
+                                              ],
+                                            ),
                                           ),
                                         ),
-                                      );
-
-                                      Future.delayed(Duration(seconds: 2), () {
-                                        cubit.updateOfferStatus(offerId: offer.id, token: utoken, status: "Pending", paymentMethod: "CreditCard") ;
-                                        Navigator.pop(context);
-                                        ScaffoldMessenger.of(context).showSnackBar(
-                                          SnackBar(
-                                            content: Text('✅ Payment Successful'),
-                                            backgroundColor: Colors.green,
-                                          ),
-                                        );
-                                      });
-                                    }
+                                      ),
+                                    );
                                   },
-                                  icon: Icon(Icons.payment),
-                                  label: Text('Pay Now', style: TextStyle(fontSize: 18)),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.indigo,
-                                    padding: EdgeInsets.symmetric(vertical: 14, horizontal: 50),
-                                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                                  ),
-                                ),
-
-                                SizedBox(height: 10),
-                              ],
+                                );
+                              },
                             ),
-                          ),
+                            ListTile(
+                              leading: Icon(Icons.money, color: Colors.green),
+                              title: Text('Cash on Delivery', style: GoogleFonts.poppins()),
+                              onTap: () {
+                                Navigator.pop(context);
+                                cubit.updateOfferStatus(
+                                  offerId: offer.id,
+                                  token: utoken,
+                                  status: "Accepted",
+                                  paymentMethod: "CashOnDelivery",
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text('✅ Offer Selected with Cash on Delivery'),
+                                    backgroundColor: Colors.green,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                       );
                     },
                   );
                 },
-
-
                 icon: const Icon(Icons.check_circle_outline),
                 label: Text('Select Offer', style: GoogleFonts.poppins(fontWeight: FontWeight.w600)),
                 style: ElevatedButton.styleFrom(

@@ -4,8 +4,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:untitled9/userdata.dart';
 
 import '../appcubit/cubit.dart';
-import '../appcubit/state.dart'; // لو عندك ملف الستيتات
-import '../models/order model.dart'; // تأكد ان دا هو ملف الموديل بتاع الأوردرات
+import '../appcubit/state.dart';
+import '../models/order model.dart';
 
 class OrderHistoryScreen extends StatelessWidget {
   const OrderHistoryScreen({super.key});
@@ -87,31 +87,34 @@ class OrderHistoryScreen extends StatelessWidget {
   }
 
   Widget buildOrderList(BuildContext context, List<OrderModel> ordersList) {
-    return ordersList.isEmpty
-        ? Center(
-      child: Text(
-        'No Orders Found',
-        style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
-      ),
-    )
-        : ListView.builder(
+    if (ordersList.isEmpty) {
+      return Center(
+        child: Text(
+          'No Orders Found',
+          style: GoogleFonts.poppins(fontSize: 16, color: Colors.grey),
+        ),
+      );
+    }
+
+    List<OrderModel> sortedOrders = [...ordersList];
+    sortedOrders.sort((a, b) => b.createdAtUtc.compareTo(a.createdAtUtc));
+
+    return ListView.builder(
       padding: const EdgeInsets.all(16),
-      itemCount: ordersList.length,
+      itemCount: sortedOrders.length,
       itemBuilder: (context, index) {
-        final order = ordersList[index];
+        final order = sortedOrders[index];
         return InkWell(
-          onTap: (){
-            print(order.id) ;
+          onTap: () {
             var cubit = BlocProvider.of<AppCubit>(context);
-            cubit.fetchOffersByOrderId(order.id, utoken) ;
-            cubit.ORDERID - order.id ;
-            cubit.offers=[] ;
-            cubit.ChangeCurrent(4) ;
+            cubit.fetchOffersByOrderId(order.id, utoken);
+            cubit.ORDERID = order.id;
+            cubit.offers = [];
+            cubit.ChangeCurrent(4);
           },
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ID & Status Row
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -138,19 +141,21 @@ class OrderHistoryScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              // Owner Name
+              Text(
+                'Created At: ${order.createdAtUtc.toLocal().toString().split(' ')[0]}',
+                style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
+              ),
+              const SizedBox(height: 8),
               Text(
                 'Owner: ${order.ownerName}',
                 style: GoogleFonts.poppins(fontSize: 14),
               ),
               const SizedBox(height: 8),
-              // Company Name
               Text(
                 'Company: ${order.companyName ?? 'Not Assigned'}',
                 style: GoogleFonts.poppins(fontSize: 14),
               ),
               const SizedBox(height: 8),
-              // Pickup & Destination
               Row(
                 children: [
                   Icon(Icons.location_on, size: 18, color: Colors.blueGrey.shade600),
@@ -164,23 +169,18 @@ class OrderHistoryScreen extends StatelessWidget {
                 ],
               ),
               const SizedBox(height: 8),
-              // Weight & Size
               Text(
                 'Weight: ${order.weightInKg} kg | Size: ${order.packageSize}',
                 style: GoogleFonts.poppins(fontSize: 14),
               ),
               const SizedBox(height: 8),
-              // Details
               Text(
                 'Details: ${order.details}',
                 style: GoogleFonts.poppins(fontSize: 14),
               ),
+              const SizedBox(height: 16),
+              Divider(color: Colors.grey.shade300),
               const SizedBox(height: 8),
-              // Created Date
-              Text(
-                "" ,
-                style: GoogleFonts.poppins(fontSize: 12, color: Colors.grey),
-              ),
             ],
           ),
         );

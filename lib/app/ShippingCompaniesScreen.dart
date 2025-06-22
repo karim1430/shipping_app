@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:untitled9/userdata.dart';
 
 import '../appcubit/cubit.dart';
 import '../appcubit/state.dart';
@@ -135,7 +136,7 @@ class ShippingCompaniesGrid extends StatelessWidget {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (_) => ChatScreen(company: company),
+                                  builder: (_) => ChatScreen(company: company,),
                                 ),
                               );
                             },

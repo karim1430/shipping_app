@@ -20,6 +20,7 @@ class AppCubit extends Cubit<AppState> {
   final api = ApiService(); //
   //List<CompanyModel> companies = [];
   List<CompanyModel> companies = [] ;
+  List<OrderModel> placedOrders = [] ;
   int ORDERID = 0 ;
   List<OrderModel> orders = [] ;
   int pendingCount = 0;
@@ -33,6 +34,10 @@ class AppCubit extends Cubit<AppState> {
     void ChangeCurrent(int v){
       c = v ;
       emit(ChangeCurrentState()) ;
+    }
+    void Refresh(){
+      i = 0 ;
+      emit(ReFresh());
     }
   Future<void> getCompanies(String token) async {
     emit(CompanyLoading());
@@ -69,7 +74,8 @@ class AppCubit extends Cubit<AppState> {
       if (response.statusCode == 200) {
         List<dynamic> data = response.data['data'];
         orders = data.map((order) => OrderModel.fromJson(order)).toList();
-         pendingCount = orders.where((order) => order.status == 'Pending').length;
+         placedOrders = orders.where((order) => order.status == 'Placed').toList();
+        pendingCount = orders.where((order) => order.status == 'Pending').length;
 
          deliveredCount = orders.where((order) => order.status == 'Delivered').length;
          lastTwoOrders = orders.length >= 2
@@ -202,6 +208,7 @@ class AppCubit extends Cubit<AppState> {
       i = 0 ;
       fetchOrders();
       emit(UpdateStaate()) ;
+      ChangeCurrent(3) ;
     } catch (e) {
       if (e is DioError) {
         print('DioError: ${e.response?.data}');
@@ -241,6 +248,8 @@ class AppCubit extends Cubit<AppState> {
         ScaffoldMessenger.of(c).showSnackBar(
           SnackBar(content: Text("Order Created Successfully!")),
         );
+        i = 0 ;
+        ChangeCurrent(3) ;
       } else {
         print("22");
         emit(OrderError());

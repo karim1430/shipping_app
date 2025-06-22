@@ -39,8 +39,8 @@ class _SplashScreenState extends State<SplashScreen> {
                   'We provide customized shipping solutions for companies of all sizes'
               ),              buildPage(
                   'assets/package.png',
-                  'Track Every Shipment',
-                  'Stay informed with real-time updates on the status of your deliveries'
+                  'Monitor Your Parcels Effortlessly',
+                  'Get instant notifications on every movement of your shipments'
               ),            ],
 
           ),

@@ -13,3 +13,4 @@ class LoadingfetchOffersByOrderId extends AppState {}
 class LoadedfetchOffersByOrderId extends AppState {}
 class errorfetchOffersByOrderId extends AppState {}
 class UpdateStaate extends AppState {}
+class ReFresh extends AppState {}

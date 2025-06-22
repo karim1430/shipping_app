@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,8 +11,96 @@ import '../userdata.dart';
 class LoginCubit extends Cubit<LoginState> {
   LoginCubit() : super(LoginInitialState());
   final api = ApiService();
+  Future<void> registerUser(
+      String fullName,
+      String email,
+      String password,
+      String phoneNumber,
+      BuildContext context,
+      ) async {
+    try {
+      final response = await Dio().post(
+        'http://shippinganddelivery.runasp.net/api/users',
+        data: {
+          "email": email,
+          "password": password,
+          "fullName": fullName,
+          "phoneNumber": phoneNumber,
+        },
+        options: Options(
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        ),
+      );
 
-  Future<void> register(
+      if (response.statusCode == 200) {
+        var data = response.data['data'];
+        String token = data['token'];
+        String registeredFullName = data['fullName'];
+        String registeredEmail = data['email'];
+
+        // عرض رسالة نجاح
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('✅ Registration completed successfully: $registeredFullName'),
+            backgroundColor: Colors.green,
+          ),
+        );
+
+        // ممكن هنا كمان تعمل Navigator.pop(context); لو عايز ترجع مثلا
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ : ${response.statusCode}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } on DioError catch (e) {
+      if (e.response != null) {
+        if (e.response?.statusCode == 400) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('⚠️ : ${e.response?.data['message']}'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        } else if (e.response?.statusCode == 409) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('⚠️ The user already exists'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('❌ خطأ: ${e.response?.data}'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌: ${e.message}'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('❌: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+
+  Future<void> egister(
       String name,
       String email,
       String password,

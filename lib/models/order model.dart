@@ -9,6 +9,8 @@ class OrderModel {
   final String status;
   final String details;
   final DateTime createdAtUtc;
+  final DateTime? deliveredAtUtc; // ✅ جديدة
+  final double price; // ✅ جديد
 
   OrderModel({
     required this.id,
@@ -21,6 +23,8 @@ class OrderModel {
     required this.status,
     required this.details,
     required this.createdAtUtc,
+    this.deliveredAtUtc,
+    required this.price,
   });
 
   factory OrderModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +39,10 @@ class OrderModel {
       status: json['status'],
       details: json['details'],
       createdAtUtc: DateTime.parse(json['createdAtUtc']),
+      deliveredAtUtc: json['deliveredAtUtc'] != null
+          ? DateTime.parse(json['deliveredAtUtc'])
+          : null,
+      price: (json['price'] as num).toDouble(),
     );
   }
 }

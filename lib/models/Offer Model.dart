@@ -1,5 +1,5 @@
 class OfferModel {
-  final int id;
+  final int id ;
   final int orderId;
   final String customerName;
   final int companyId;
